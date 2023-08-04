@@ -12,8 +12,6 @@ expressWs(app);
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
 
 // Server startup
 const server = app.listen(process.env.SERVER_PORT, () => {
@@ -61,7 +59,6 @@ app.ws('/ws', (ws, req) => {
       } else {
         rooms.set(msg.room_id, [clients.get(msg.id)]);
       }
-
       if (room_hosts.get(msg.room_id) == null) {
         room_hosts.set(msg.room_id, id);
       }
@@ -70,18 +67,14 @@ app.ws('/ws', (ws, req) => {
 
     if (msg.command == 'set_link') {
       room_links[clientRoom] = msg.link;
-      console.log(room_links);
-      console.log(room_links[clientRoom]);
       refreshAllClients(rooms, clientRoom);
     }
 
     if (msg.command == 'pause') {
-      console.log('PAUSED');
       broadcastCommand(msg.room_id, 'pause');
     }
 
     if (msg.command == 'play') {
-      console.log('PLAYED');
       broadcastCommand(msg.room_id, 'play');
     }
 
@@ -126,7 +119,6 @@ app.ws('/ws', (ws, req) => {
 
   // On close, deletes the client data and randomizes a new host, if it exists
   ws.on('close', (data) => {
-    console.log('CLIENT LEFT');
     clients.delete(id);
     if (rooms.has(clientRoom)) {
       const clients = rooms.get(clientRoom);
@@ -179,13 +171,13 @@ function broadcastCommand(room_id, command) {
   }
 }
 
-function broadcastLink(room_id, link) {
-  const response = { command: 'set_link', link: link };
-  const responseJson = JSON.stringify(response);
-  for (const client of rooms.get(room_id)) {
-    client.client.send(responseJson);
-  }
-}
+// function broadcastLink(room_id, link) {
+//   const response = { command: 'set_link', link: link };
+//   const responseJson = JSON.stringify(response);
+//   for (const client of rooms.get(room_id)) {
+//     client.client.send(responseJson);
+//   }
+// }
 
 function broadcastRoom(room_id, message, name) {
   const response = { command: 'global', message: name + ': ' + message };
@@ -206,7 +198,7 @@ function getClientsJson(room_id) {
 }
 
 // Collects and sends back updated data
-app.post('/api/getRefreshData', (req, res) => {
+app.post('/api/refresh', (req, res) => {
   const data = req.body;
   const client = clients.get(data.id);
   const isHost = client.id == room_hosts.get(data.room_id) ? true : false;
@@ -216,22 +208,13 @@ app.post('/api/getRefreshData', (req, res) => {
     client_data: getClientsJson(data.room_id),
     link: room_links[data.room_id],
   };
-  console.log(toSend);
   res.json(toSend).status(200);
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/join.html');
+  res.sendFile(__dirname + '/public/client.html');
 });
 
-app.get('/img', (req, res) => {
-  res.sendFile(__dirname + '/public/img.png');
-});
-
-app.get('/api/file/:filename', (req, res) => {
-  res.sendFile(__dirname + '/movies/' + req.params.filename);
-});
-
-app.get('/a', (req, res) => {
-  res.sendFile(__dirname + '/public/clt.html');
+app.get('/api/file/:folder/:filename', (req, res) => {
+  res.sendFile(__dirname + '/' + req.params.folder + '/' + req.params.filename);
 });

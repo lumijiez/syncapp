@@ -32,11 +32,11 @@
   <body>
     <div id="form-container">
       <form id="roomForm">
-        <h2>Room ID Form</h2>
+        <h2>Room ID</h2>
         <label for="roomId">Room ID:</label>
         <input type="text" id="roomId" required />
         <br /><br />
-        <button type="submit" id="submitBtn">Submit</button>
+        <button type="submit" id="submitBtn">Join</button>
       </form>
       <div id="mainPage" style="display: none">
         <div class="container text-center">
@@ -144,19 +144,19 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       </div>
     </div>
+    <script src="/utils.js"></script>
     <script src="/client.js"></script>
     <script>
+      const UTL = new Utils();
       let ClientInstance;
-      document.addEventListener('DOMContentLoaded', function () {
-        const roomForm = document.getElementById('roomForm');
-        const mainPage = document.getElementById('mainPage');
-        let hasSubmitted = false;
-        roomForm.addEventListener('submit', function (event) {
+      document.addEventListener('DOMContentLoaded', () => {
+        const roomForm = UTL.$('roomForm');
+        const mainPage = UTL.$('mainPage');
+        roomForm.addEventListener('submit', (event) => {
           event.preventDefault();
-          const ID = document.getElementById('roomId').value;
+          const ID = UTL.$('roomId').value;
           mainPage.style.display = 'block';
           roomForm.style.display = 'none';
-          hasSubmitted = true;
           ClientInstance = new Client(ID);
           ClientInstance.connect();
         });

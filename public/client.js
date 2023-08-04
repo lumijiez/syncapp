@@ -6,16 +6,16 @@ class Client {
     this.#ClientData = { name: 'Guest', id: 0, room: room_id };
     this.#ClientSocket = new WebSocket('ws://93.116.13.156:3000/ws');
 
-    this.host_field = document.getElementById('host_field');
-    this.name_field = document.getElementById('name_field');
-    this.clients_field = document.getElementById('clients_field');
-    this.name_input = document.getElementById('name_input');
-    this.global_field = document.getElementById('global_field');
-    this.global_input = document.getElementById('global_input');
-    this.room_field = document.getElementById('room_field');
+    this.host_field = UTL.$('host_field');
+    this.name_field = UTL.$('name_field');
+    this.clients_field = UTL.$('clients_field');
+    this.name_input = UTL.$('name_input');
+    this.global_field = UTL.$('global_field');
+    this.global_input = UTL.$('global_input');
+    this.room_field = UTL.$('room_field');
+    this.video_field = UTL.$('video_field');
+    this.link_input = UTL.$('link_input');
     this.room_field.textContent += room_id;
-    this.video_field = document.getElementById('video_field');
-    this.link_input = document.getElementById('link_input');
   }
 
   connect() {
@@ -49,7 +49,7 @@ class Client {
     });
 
     this.#ClientSocket.addEventListener('open', () => {
-      console.log('Connected');
+      console.log('Connected to WebSocket');
     });
 
     this.#ClientSocket.addEventListener('message', (event) => {
@@ -179,7 +179,7 @@ class Client {
 
   refreshData() {
     axios
-      .post('/api/getRefreshData', {
+      .post('/api/refresh', {
         id: this.#ClientData.id,
         room_id: this.#ClientData.room,
       })
