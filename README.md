@@ -1,15 +1,9 @@
 # SyncApp
 
-![image](https://github.com/lumijiez/SyncApp/assets/59575049/d153828e-6fc2-46f9-a057-e47b171188da)
+User-friendly and simple platform for video syncing between rooms of clients based on WebSockets, and implemented using Express.js, Node.js in pair with ws.
 
-Tiny app based on WebSockets, and implemented using Express.js, Node.js in pair with ws.
+Implemented using a wide range of API endpoints and WebSocket commands, works swiftly.
 
-## To-Do List
+## Known bugs:
+1. Sometimes pausing might cause an infinite loop of starting and stopping, making the video unplayable and crashing the server. Might need to implement a failsafe method.
 
-The following tasks are on our to-do list:
-
-1. Automatize syncing between clients
-2. Free the clients map on client exit (causes memory leaks)
-3. Implement hosts and automatize hosting
-4. Workaround for autoplay
-5. Implement room authorization for added security
