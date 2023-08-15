@@ -5,7 +5,9 @@ class Client {
   constructor(room_id) {
     this.#ClientData = { name: 'Guest', id: 0, room: room_id };
     this.#ClientSocket = new WebSocket('ws://93.116.13.156:3000/ws');
-
+    this.isManuallyPaused = true;
+    this.isManuallyPlayed = true;
+    this.isManuallySeeked = true;
     this.host_field = UTL.$('host_field');
     this.name_field = UTL.$('name_field');
     this.clients_field = UTL.$('clients_field');
@@ -19,33 +21,35 @@ class Client {
   }
 
   connect() {
-    let isManuallySeeked = true;
-    let isManuallyPlayed = true;
-    let isManuallyPaused = true;
 
     this.video_field.addEventListener('play', () => {
-      if (isManuallyPlayed) {
+      if (this.isManuallyPlayed) {
         const js = {
           command: 'play',
+          client_id: this.#ClientData.id,
           room_id: this.#ClientData.room,
         };
         this.sendCommand(js);
-      } else isManuallyPlayed = true;
+      } else this.isManuallyPlayed = true;
+      console.log("PLAYED")
     });
 
     video_field.addEventListener('pause', () => {
-      if (isManuallyPaused) {
+      if (this.isManuallyPaused) {
         const js = {
           command: 'pause',
+          client_id: this.#ClientData.id,
           room_id: this.#ClientData.room,
         };
         this.sendCommand(js);
-      } else isManuallyPaused = true;
+      } else this.isManuallyPaused = true;
+      console.log("PAUSED")
     });
 
     video_field.addEventListener('seeked', () => {
-      if (isManuallySeeked) this.syncForVid();
-      else isManuallySeeked = true;
+      if (this.isManuallySeeked) this.syncForVid();
+      else this.isManuallySeeked = true;
+      console.log("SEEKED");
     });
 
     this.#ClientSocket.addEventListener('open', () => {

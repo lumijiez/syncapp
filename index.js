@@ -71,11 +71,11 @@ app.ws('/ws', (ws, req) => {
     }
 
     if (msg.command == 'pause') {
-      broadcastCommand(msg.room_id, 'pause');
+      broadcastCommand(msg.room_id, 'pause', msg.client_id);
     }
 
     if (msg.command == 'play') {
-      broadcastCommand(msg.room_id, 'play');
+      broadcastCommand(msg.room_id, 'play', msg.client_id);
     }
 
     // Websocket command to switch hosts
@@ -163,11 +163,11 @@ function syncClients(room_id, time) {
   }
 }
 
-function broadcastCommand(room_id, command) {
+function broadcastCommand(room_id, command, client_id) {
   const response = { command: command };
   const responseJson = JSON.stringify(response);
   for (const client of rooms.get(room_id)) {
-    client.client.send(responseJson);
+    if (client.id != client_id) client.client.send(responseJson);
   }
 }
 
